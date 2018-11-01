@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  fpm:
+    restart: always
+    image: php:7-fpm
+    container_name: nginx_php
+    build:
+      context: ./
+      dockerfile: ./php.dockerfile
+    volumes:
+      - ./public:/public
+    working_dir: /public
+    ports:
+      - "9000"
+    network_mode: "host"
+
+  web:
+    restart: always
+    image: nginx:1.0.0
+    container_name: nginx_v100
+    build:
+      context: ./
+      dockerfile: ./nginx.dockerfile
+    working_dir: /public
+    # command: make run
+    ports:
+      - "80:80"
+    volumes:
+      - ./public:/public
+      - ./logs:/logs
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf
+    # command: [nginx-debug, '-g', 'daemon off;']
+    network_mode: "host"
+    depends_on:
+        - fpm
