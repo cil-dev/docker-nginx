@@ -9,13 +9,23 @@ services:
       context: ./
       dockerfile: ./php.dockerfile
     volumes:
+      - ./include:/include
       - ./public:/public
     working_dir: /public
     ports:
       - "9000"
-    network_mode: "host"
+    # network_mode: "host"
 
-  web:
+  redis:
+    image: redis:4.0.5-alpine
+    container_name: nginx_redis
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    # network_mode: "host"
+    volumes:
+      - ./data:/data
+
+  nginx:
     restart: always
     image: nginx:1.0.0
     container_name: nginx_v100
@@ -26,11 +36,19 @@ services:
     # command: make run
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./public:/public
-      - ./logs:/logs
       - ./conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/ssl
+      - ./logs:/logs
+      - ./include:/include
+      - ./public:/public
     # command: [nginx-debug, '-g', 'daemon off;']
-    network_mode: "host"
+    # network_mode: "host"
     depends_on:
         - fpm
+
+networks:
+  default:
+    external:
+      name: local-nginx
