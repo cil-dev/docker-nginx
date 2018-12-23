@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  redis:
+    restart: always
+    image: redis:4.0.5-alpine
+    container_name: nginx_redis
+    command: ["redis-server"]
+    volumes:
+      - ./data:/data
+
   fpm:
     restart: always
     image: php:7-fpm
@@ -12,31 +20,15 @@ services:
       - ./include:/include
       - ./public:/public
     working_dir: /public
-    ports:
-      - "9000"
-    # network_mode: "host"
-
-  redis:
-    restart: always
-    image: redis:4.0.5-alpine
-    container_name: nginx_redis
-    # command: ["redis-server", "--appendonly", "yes"]
-    command: ["redis-server"]
-    ports:
-      - "6379:6379"
-    # network_mode: "host"
-    volumes:
-      - ./data:/data
 
   nginx:
     restart: always
     image: nginx:1.0.0
-    container_name: nginx_v100
+    container_name: nginx
     build:
       context: ./
       dockerfile: ./nginx.dockerfile
     working_dir: /public
-    # command: make run
     ports:
       - "80:80"
       - "443:443"
@@ -46,12 +38,8 @@ services:
       - ./logs:/logs
       - ./include:/include
       - ./public:/public
-    # command: [nginx-debug, '-g', 'daemon off;']
-    # network_mode: "host"
-    depends_on:
-        - fpm
 
 networks:
   default:
     external:
-      name: local-nginx
+      name: nginx-network
