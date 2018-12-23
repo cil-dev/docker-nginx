@@ -8,12 +8,14 @@ Docker image including:
 make network; make start
 
 ## Commands
-make network - Creates bridge network
-make start - Builds image and starts the container
-make daemon - Builds image and starts the container in detached mode
-make restart - restarts the services
+
+ - make network - Creates bridge network 
+ - make start - Builds image and starts the container
+ - make daemon - Builds image and starts the container in detached mode
+ - make restart - restarts the services
 
 ## Directory Structure
+
  - public - root nginx directory
  - include - shared but not public folder: put your php project here for example
  - conf - nginx configuration file
