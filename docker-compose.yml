@@ -17,6 +17,7 @@ services:
     # network_mode: "host"
 
   redis:
+    restart: always
     image: redis:4.0.5-alpine
     container_name: nginx_redis
     # command: ["redis-server", "--appendonly", "yes"]
